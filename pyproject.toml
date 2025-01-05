@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "add-drop-bot"
+version = "0.1.0"
+description = ""
+authors = ["arystambek-dimash <arystambekdimash005@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiogram = "^3.16.0"
+sqlalchemy = "^2.0.36"
+asyncpg = "^0.30.0"
+pydantic-settings = "^2.7.1"
+bcrypt = "^4.2.1"
+dependency-injector = "^4.44.0"
+requests = "^2.32.3"
+selenium = "^4.27.1"
+webdriver-manager = "^4.0.2"
+aiohttp = "^3.11.11"
+bs4 = "^0.0.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
