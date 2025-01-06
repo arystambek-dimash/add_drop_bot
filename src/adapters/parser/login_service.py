@@ -24,5 +24,6 @@ async def login_and_save_cookies(username: str, password: str, url: str = "https
 
             cookie_jar = session.cookie_jar.filter_cookies(url)
             cookies_dict = {cookie.key: cookie.value for cookie in cookie_jar.values()}
-
+            if cookies_dict.get("uname") is None:
+                raise ValidationError("Вход не выполнен - проверьте учетные данные")
             return cookies_dict

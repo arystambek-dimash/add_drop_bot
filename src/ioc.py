@@ -31,6 +31,7 @@ class AppContainer(containers.DeclarativeContainer):
         get_engine,
         settings=config
     )
+
     session_maker = providers.Singleton(
         create_session,
         engine=engine

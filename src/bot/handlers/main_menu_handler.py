@@ -1,6 +1,9 @@
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+
+from src.bot.handlers.common_keyboards import get_menu_keyboard
 from src.domain.interfaces.student_repository_interface import IStudentRepository
+
 
 async def menu_handler(message: Message, state: FSMContext, student_repository: IStudentRepository):
     telegram_id = str(message.from_user.id)
@@ -14,19 +17,6 @@ async def menu_handler(message: Message, state: FSMContext, student_repository: 
     last_name = user.last_name
     menu_text = f"👋 {first_name} {last_name}"
 
-    inline_kb = InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Портал", callback_data="old_my_sdu_menu"),
-                InlineKeyboardButton(text="Мои желаемые предметы", callback_data="wanted_subjects"),
-            ],
-            [
-                InlineKeyboardButton(text="Выйти", callback_data="wanted_subjects"),
-            ],
-            [
-                InlineKeyboardButton(text="О приложений", callback_data="about"),
-            ]
-        ]
-    )
+    inline_kb = get_menu_keyboard()
     await message.answer(menu_text, reply_markup=inline_kb)
     await state.clear()

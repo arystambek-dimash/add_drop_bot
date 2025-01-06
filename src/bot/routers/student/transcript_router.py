@@ -154,5 +154,3 @@ def setup_transcript_routes(
             reply_markup=back_keyboard
         )
         await callback.answer()
-
-        # await old_my_sdu_menu_handler(callback, state)

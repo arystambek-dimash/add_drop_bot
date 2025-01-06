@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from alembic import context
 from pydantic_settings import BaseSettings
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,3 +25,6 @@ class Settings(BaseSettings):
 
 def get_settings() -> Settings:
     return Settings()
+
+
+settings = get_settings()

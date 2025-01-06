@@ -13,3 +13,4 @@ class StudentModel(Base):
     first_name: Mapped[str] = mapped_column(sa.String, nullable=True)
     last_name: Mapped[str] = mapped_column(sa.String, nullable=True)
     language: Mapped[str] = mapped_column(sa.String, default='ru')
+    is_active: Mapped[bool] = mapped_column(sa.Boolean, default=False)

@@ -6,7 +6,7 @@ from typing import List, Dict
 from src.domain.exceptions import ValidationError
 
 
-async def parse_grades_page_service(cookies_dict: dict, term: str) -> List[Dict]:
+async def parse_grades_page_service(cookies_dict: dict) -> List[Dict]:
     base_url = "https://my.sdu.edu.kz/index.php?mod=grades"
     async with aiohttp.ClientSession(cookies=cookies_dict) as session:
         try:

@@ -28,11 +28,10 @@ def setup_grades_routes(
         if not session_data:
             await callback.answer("Нет сессии. Пожалуйста, авторизуйтесь.")
             return
-
+        terms = await redis_repository.get()
         try:
             parsed_data = await parse_grades_page_service(
                 cookies_dict=json.loads(session_data),
-                term=
             )
             print(parsed_data)
         except Exception as e:

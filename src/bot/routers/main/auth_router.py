@@ -62,39 +62,43 @@ def setup_auth_routes(router: Router, student_repository: IStudentRepository):
         processing_msg = await message.answer("Обработка данных...")
         messages_to_delete.append(processing_msg.message_id)
 
+        user = await student_repository.get_by_telegram_id(telegram_id)
         cookies = await login_and_save_cookies(username, password)
-        full_name = await parse_home_page_service(cookies)
+        if user is None:
+            full_name = await parse_home_page_service(cookies)
 
-        if full_name:
-            parts = full_name.split(maxsplit=1)
-            first_name, last_name = parts if len(parts) == 2 else (full_name, "")
-
-            await student_repository.create(
-                StudentDTO(
-                    telegram_id=telegram_id,
-                    first_name=first_name,
-                    last_name=last_name,
-                    student_id=username,
-                    student_password=password
+            if full_name:
+                parts = full_name.split(maxsplit=1)
+                first_name, last_name = parts if len(parts) == 2 else (full_name, "")
+                await student_repository.create(
+                    StudentDTO(
+                        telegram_id=telegram_id,
+                        first_name=first_name,
+                        last_name=last_name,
+                        student_id=username,
+                        student_password=password,
+                        is_active=True
+                    )
                 )
-            )
-
-            for msg_id in messages_to_delete:
-                try:
-                    await message.bot.delete_message(message.chat.id, msg_id)
-                except Exception:
-                    pass
-            success_msg = await message.answer("Авторизация успешна!")
-            await menu_handler(message, state, student_repository)
-
+            else:
+                error_msg = await message.answer("Ошибка при парсинге имени пользователя.")
+                messages_to_delete.append(error_msg.message_id)
+                await state.update_data(messages_to_delete=messages_to_delete)
+        else:
+            user.is_active = True
+            await student_repository.update(user)
+        for msg_id in messages_to_delete:
             try:
-                await message.bot.delete_message(message.chat.id, success_msg.message_id)
+                await message.bot.delete_message(message.chat.id, msg_id)
             except Exception:
                 pass
 
-        else:
-            error_msg = await message.answer("Ошибка при парсинге имени пользователя.")
-            messages_to_delete.append(error_msg.message_id)
-            await state.update_data(messages_to_delete=messages_to_delete)
+        success_msg = await message.answer("Авторизация успешна!")
+        await menu_handler(message, state, student_repository)
+
+        try:
+            await message.bot.delete_message(message.chat.id, success_msg.message_id)
+        except Exception:
+            pass
 
         await state.clear()
