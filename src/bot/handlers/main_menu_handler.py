@@ -18,9 +18,10 @@ async def menu_handler(message: Message, state: FSMContext, student_repository: 
         inline_keyboard=[
             [
                 InlineKeyboardButton(text="Портал", callback_data="old_my_sdu_menu"),
+                InlineKeyboardButton(text="Мои желаемые предметы", callback_data="wanted_subjects"),
             ],
             [
-                InlineKeyboardButton(text="Мои хотелки", callback_data="wanted_subjects"),
+                InlineKeyboardButton(text="Выйти", callback_data="wanted_subjects"),
             ],
             [
                 InlineKeyboardButton(text="О приложений", callback_data="about"),

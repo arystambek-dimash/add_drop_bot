@@ -17,9 +17,3 @@ class IStudentRepository(Protocol):
 
     async def delete(self, telegram_id: str) -> bool:
         pass
-
-    async def update_session_data(self, telegram_id: str, session_data: str) -> bool:
-        pass
-
-    async def get_session_data(self, telegram_id: str) -> Optional[str]:
-        pass

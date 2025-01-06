@@ -60,26 +60,3 @@ class StudentRepository:
         await self._session.delete(existing)
         await self._session.commit()
         return True
-
-    async def update_session_data(self, telegram_id: str, session_data: str) -> bool:
-        stmt = (
-            update(StudentModel)
-            .where(StudentModel.telegram_id == telegram_id)
-            .values(session_data=session_data)
-            .returning(StudentModel)
-        )
-
-        result = await self._session.execute(stmt)
-        updated_model = result.scalars().first()
-
-        if not updated_model:
-            return False
-
-        await self._session.commit()
-        return True
-
-    async def get_session_data(self, telegram_id: str) -> Optional[str]:
-        stmt = select(StudentModel.session_data).where(StudentModel.telegram_id == telegram_id)
-        result = await self._session.execute(stmt)
-        session_data = result.scalars().first()
-        return session_data

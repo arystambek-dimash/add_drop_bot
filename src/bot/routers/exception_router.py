@@ -28,14 +28,6 @@ async def handle_internal_server_error(event: ErrorEvent, message: Message):
     await message.answer(str(event.exception) or "Произошла внутренняя ошибка сервера. Попробуйте позже.")
 
 
-@router.errors()
-async def handle_general_exception(update: Update, exception: Exception):
-    if isinstance(exception, TelegramAPIError):
-        message = "Ошибка Telegram API. Пожалуйста, попробуйте позже."
-    else:
-        message = "Неизвестная ошибка. Обратитесь в службу поддержки."
-    print(f"Произошла ошибка: {exception}")
-    if update.message:
-        await update.message.answer(message)
-
-    return True
+@router.error(ExceptionTypeFilter(TelegramAPIError), F.update.message.as_("message"))
+async def handle_telegram_api_error(event: ErrorEvent, message: Message):
+    await message.answer(str(event.exception) or "Ошибка Telegram. Пожалуйста, попробуйте позже.")

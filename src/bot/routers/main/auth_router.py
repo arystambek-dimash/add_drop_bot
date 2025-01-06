@@ -1,30 +1,24 @@
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-import json
 
 from src.adapters.parser.home_page_service import parse_home_page_service
 from src.adapters.parser.login_service import login_and_save_cookies
-from src.adapters.utils.hash_pass import hash_password
-from src.bot.handlers.menu_handler import menu_handler
+from src.bot.handlers.main_menu_handler import menu_handler
 from src.bot.states import StudentLoginState
 from src.domain.dto.student_dto import StudentDTO
 from src.domain.interfaces.student_repository_interface import IStudentRepository
 
 
-def setup_auth_routes(student_repository: IStudentRepository) -> Router:
-    router = Router()
-
+def setup_auth_routes(router: Router, student_repository: IStudentRepository):
     @router.callback_query(F.data == "auth")
     async def on_auth_button(callback: CallbackQuery, state: FSMContext):
         telegram_id = str(callback.message.from_user.id)
         user = await student_repository.get_by_telegram_id(telegram_id)
 
         if user is None:
-            # Store the initial message ID
             await state.update_data(messages_to_delete=[callback.message.message_id])
 
-            # Send and store username prompt message
             msg = await callback.message.answer("Пожалуйста, введите свой username в (Old My SDU):")
             state_data = await state.get_data()
             messages_to_delete = state_data.get('messages_to_delete', [])
@@ -40,12 +34,10 @@ def setup_auth_routes(student_repository: IStudentRepository) -> Router:
 
     @router.message(StudentLoginState.WAITING_FOR_STUDENT_ID)
     async def process_student_id(message: Message, state: FSMContext):
-        # Store user's message ID
         state_data = await state.get_data()
         messages_to_delete = state_data.get('messages_to_delete', [])
         messages_to_delete.append(message.message_id)
 
-        # Send and store password prompt message
         msg = await message.answer("Введите пароль:")
         messages_to_delete.append(msg.message_id)
 
@@ -83,8 +75,7 @@ def setup_auth_routes(student_repository: IStudentRepository) -> Router:
                     first_name=first_name,
                     last_name=last_name,
                     student_id=username,
-                    student_password=hash_password(password),
-                    session_data=json.dumps(cookies),
+                    student_password=password
                 )
             )
 
@@ -107,5 +98,3 @@ def setup_auth_routes(student_repository: IStudentRepository) -> Router:
             await state.update_data(messages_to_delete=messages_to_delete)
 
         await state.clear()
-
-    return router

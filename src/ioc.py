@@ -3,12 +3,13 @@ from dependency_injector import containers, providers
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from src.adapters.database.redis import redis_connection
+from src.adapters.repositories.redis_repository import RedisRepository
 from src.adapters.repositories.student_repository import StudentRepository
 from src.config import get_settings
 from src.adapters.database.postgres import get_engine, create_session
 
 from src.domain.interfaces.student_repository_interface import IStudentRepository
-from src.middlewares import UserIDMiddleware
 
 
 class AppContainer(containers.DeclarativeContainer):
@@ -40,8 +41,15 @@ class AppContainer(containers.DeclarativeContainer):
         session_maker=session_maker
     )
 
+    redis_connection_provider = providers.Resource(
+        redis_connection, settings=config
+    )
+
+    redis_repository = providers.Factory(
+        RedisRepository, redis=redis_connection_provider
+    )
+
     student_repository: providers.Factory[IStudentRepository] = providers.Factory(
         StudentRepository,
         session=session
     )
-    user_id_middleware = providers.Singleton(UserIDMiddleware)

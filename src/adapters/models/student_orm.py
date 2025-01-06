@@ -13,4 +13,3 @@ class StudentModel(Base):
     first_name: Mapped[str] = mapped_column(sa.String, nullable=True)
     last_name: Mapped[str] = mapped_column(sa.String, nullable=True)
     language: Mapped[str] = mapped_column(sa.String, default='ru')
-    session_data: Mapped[str] = mapped_column(sa.Text, nullable=True)

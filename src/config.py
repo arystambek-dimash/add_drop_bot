@@ -14,6 +14,10 @@ class Settings(BaseSettings):
 
     TELEGRAM_TOKEN: str
 
+    REDIS_HOST: str
+    REDIS_DB: int
+    REDIS_PORT: int
+
     class Config:
         env_file = BASE_DIR / ".env"
 

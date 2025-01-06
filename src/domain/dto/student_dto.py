@@ -13,4 +13,3 @@ class StudentDTO(BaseDTO[StudentModel, "StudentDTO"]):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     language: Optional[str] = None
-    session_data: Optional[str] = None
